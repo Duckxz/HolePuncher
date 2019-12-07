@@ -30,8 +30,11 @@ local function request_password(split,ip,port,session_number)
 end
 
 local function handler(split,ip,port)
-  if split[1] == "setsession" or split[1] == "SETSESSION" and split[2]then
+  if split[1] == "setsession" or split[1] == "SETSESSION" and split[2] then
     -- register session --
+    if split[2] == nil then -- i was sure `and split[2]` would do the trick but no
+      return
+    end
     if tonumber(split[2]) < 0 then
       print("host "..ip..":"..port.." tried to create a session on number under 0 ("..tonumber(split[2])..")")
       hpsock:sendto("OUTOFBOUNDS", ip, port)
@@ -60,6 +63,9 @@ local function handler(split,ip,port)
     end
   elseif split[1] == "getsession" or split[1] == "GETSESSION" and split[2] then
     -- send session, check if session has password and request password when set --
+    if split[2] == nil then
+      return
+    end
     if sessions[tonumber(split[2])].ip == 0 or sessions[tonumber(split[2])].port == 0 or not sessions[tonumber(split[2])] or not sessions[tonumber(split[2])].ip or not sessions[tonumber(split[2])].port then
       print("host "..ip..":"..port.." has tried to request invalid session "..tonumber(split[2]))
       hpsock:sendto("DENIED",ip,port)
@@ -89,6 +95,9 @@ local function handler(split,ip,port)
     end
   elseif split[1] == "stopsession" or split[1] == "STOPSESSION" and split[2] then
     -- stop session, check if session has password and request password when set --
+    if split[2] == nil then
+      return
+    end
     if ip == sessions[tonumber(split[2])].ip and port == sessions[tonumber(split[2])].port then
       sessions[tonumber(split[2])] = nil
       collectgarbage()
@@ -101,6 +110,9 @@ local function handler(split,ip,port)
       return
     end
   elseif split[1] == "setpwd" or split[1] == "SETPWD" and split[2] and split[3] then
+    if split[2] == nil then
+      return
+    end
     -- set password for session, check if session has password and reset to new one --
     if not sessions[tonumber(split[2])] or (not sessions[tonumber(split[2])].ip and not sessions[tonumber(split[2])].port) then
       print("host "..ip..":"..port.." tried to set a password for non-existant session "..tostring(split[2]))
