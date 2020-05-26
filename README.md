@@ -1,3 +1,3 @@
 # HolePuncher
 
-a lua HolePuncher, requires [lua-std](https://github.com/Duckxz/lua-std) in same folder
+a lua HolePuncher, requires lua-std(unavailable) in same folder
